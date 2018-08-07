@@ -59,3 +59,13 @@ typings/
 
 # next.js build output
 .next
+
+.DS_Store
+.babelrc
+.buckconfig
+.flowconfig
+.watchmanconfig
+android/
+ios/
+my-release-key.keystore
+package-lock.json
