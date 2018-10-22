@@ -5,16 +5,52 @@ export default StyleSheet.create({
     container:{
         flex:1,
         backgroundColor:'#fff',
+        paddingTop: 30
+    },
+    header: {
+        height: 50,
+        width: width,
+        backgroundColor:'#FFFFFF',
+        flexDirection: 'row',
+        justifyContent:  'center',
+        alignItems: 'center',
+    },
+    SingIn:{
+        position: 'absolute',
+        right: 20
+    },
+    headerTitle: {
+        fontSize: 16,
+        fontWeight: '300',
+        color: '#2196F3',
+        
+    },
+    TitleText:{
+        height:60,
+        width: width,
+        flexDirection: 'row',
+        justifyContent:  'center',
+        alignItems: 'center',
+    },
+    Welcome:{
+        fontSize: 24,
+        fontWeight: '700',
+        color: '#000',
     },
     wrapper: {
         width: '100%',
         height: '50%'
     },
-    slide:{
+    SwiperView:{
+        height:height-200,
+        width: width,
+        flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    slide:{
+        flex: 1,
         backgroundColor: 'transparent',
-       
     },
     slide1: {
      
@@ -52,25 +88,22 @@ export default StyleSheet.create({
         marginRight: 15
     },
     loginText: {
-        color: '#66b6cb',
+        color: '#DDD',
         fontSize: 15,
         fontWeight: '500'
     },
     image: {
-        width:width,
-        height: (width),
-        justifyContent:'center',
+        width:width-100,
+        height: height-250,
         alignItems: 'center'
     },
     logoText: {
         color: 'white',
-        fontSize: 29,
+        fontSize: 40,
         fontWeight: 'bold',
         // fontFamily: 'Roboto'
     },
     loadinView: {
-        flex: 1,
-        justifyContent: 'center',
         alignItems: 'center',
         position: 'absolute',
         width: width,

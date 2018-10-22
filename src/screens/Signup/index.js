@@ -28,8 +28,10 @@ export default class Login extends Component {
             email: '',
             password: '',
             phone:'',
+            Vcode:'',
             firstnameValid: true,
             validStart: false,
+            verifycode:false,
             lastnameValid: true,
             emailValid: true,
             passwordValid: true,
@@ -38,17 +40,24 @@ export default class Login extends Component {
         }
     }
     componentDidMount(){
-        console.log('++---',this.props.navigation.state.params.ServiceData)
+        //console.log('++---',this.props.navigation.state.params.ServiceData)
     }
     render(){
         return(
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <TouchableOpacity onPress={()=>this.props.navigation.goBack()} style={styles.backIcon}>
-                        <Icon name='ios-arrow-back' size={40} color='#212123'/>
-                    </TouchableOpacity>
-                    <Text style={styles.headerTitle}>Sign Up</Text>
+                    {
+                        !this.state.verifycode?
+                        <TouchableOpacity onPress={()=>this.props.navigation.goBack()} style={styles.backIcon}>
+                            <Icon name='ios-arrow-back' size={40} color='#212123'/>
+                        </TouchableOpacity>
+                        :null
+                    }
+                        <Text style={styles.headerTitle}>{!this.state.verifycode?"Sign Up":"Verify Code"}</Text>
+                        
                 </View>
+                {
+                    !this.state.verifycode?
                 <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 30}}>
                     <View style={styles.inputView}>
                         <TextInput
@@ -78,7 +87,7 @@ export default class Login extends Component {
                         />
                     </View>
                     {
-                        this.state.emailValid&&this.state.validStart?
+                        this.state.emailValid && this.state.validStart?
                         <View style={styles.validView}>
                             <Text>Please enter a valid email address.</Text>
                         </View>:null
@@ -118,23 +127,34 @@ export default class Login extends Component {
                     }
                     <Button text={'Create Account'} style={{marginTop:35}} onPress={()=>this.Signup()}/>
                 </ScrollView>
-                {
-                    this.state.loading?
-                    <View style={styles.loadinView}>
-                        <ActivityIndicator size='large' color='#41cab7' />
-                    </View>:null
+                :
+                    <View>
+                    <View style={styles.inputView}>
+                        <TextInput
+                            placeholder='Code' 
+                            onChangeText={(Vcode)=>this.Vcode(Vcode)}
+                            underlineColorAndroid = 'transparent'
+                            value = {this.state.Vcode}
+                            style = {styles.textInput}
+
+                        />
+                    </View>
+                    <Button text={'Confirm'} style={{marginTop:35}} onPress={()=>this.confirm()}/>
+                    </View>
                 }
             </View>
         )
     }
     firstname(name){
         if(name.length===0) this.setState({firstnameValid: true,firstname: name})
-        else this.setState({firstnameValid: false,firstname: name})
-        
+        else this.setState({firstnameValid: false,firstname: name})        
     }
     lastname(name){
         if(name.length===0) this.setState({lastname: name, lastnameValid: true})
         else this.setState({lastname: name, lastnameValid: false})
+    }
+    Vcode(Vcode){
+        this.setState({Vcode: Vcode})
     }
     email(email){
         this.setState({email: email})
@@ -156,28 +176,12 @@ export default class Login extends Component {
     }
     Signup(){       
         this.setState({validStart: true})
-        const {ServiceData} = this.props.navigation.state.params
         if(this.state.firstnameValid||this.state.emailValid||this.state.passwordValid||this.state.phoneValid) return
-        this.setState({loading: true})
+
+        this.setState({verifycode:true})
         
-        firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
-        .then(()=>{
-            let uid = firebase.auth().currentUser.uid;
-            firebase.database().ref('users/'+uid).set({
-                firstname: this.state.firstname,
-                phone: this.state.phone
-            })
-            firebase.auth().currentUser.sendEmailVerification().then(()=>{
-            
-            })
-            this.setState({loading: false})
-            this.props.navigation.navigate('Schedule',{ServiceData: ServiceData});
-        })
-        .catch(error=>{
-            alert(error.message)
-            this.setState({loading: false})
-            
-        })
-        
+    }
+    confirm(){
+        this.props.navigation.navigate('Service')
     }
 }

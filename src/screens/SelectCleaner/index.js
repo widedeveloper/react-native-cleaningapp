@@ -16,9 +16,9 @@ import {
 import styles from './styles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Button from '../../components/button';
-import firebase from 'firebase';
 import StarRating from 'react-native-star-rating';
 import Composer from 'react-native-message-composer'; 
+import FastImage from 'react-native-fast-image'
 import axios from 'axios'
 export default class Schedule extends Component {
     static navigationOptions = {
@@ -40,7 +40,7 @@ export default class Schedule extends Component {
             cleanerData:[],
             loading: true,
             loading1: true,
-            selectedCleaner:[],
+            selectedCleaner:null,
             selectedPhone: [],
             scheduleData: [],
             name:'',
@@ -49,74 +49,38 @@ export default class Schedule extends Component {
         }
     }
     componentWillMount(){
-        let uid = firebase.auth().currentUser.uid
-        firebase.database().ref('cleaners').on('value',snapshot=>{
-            let data = [];            
-            snapshot.forEach(child=>{
-                let obj = {}
-                // console.log('++--',child.val(),child.key)
-                obj.key = child.key;
-                obj.val = child.val();
-                data.push(obj);
-            })
-            this.setState({cleanerData: data, loading: false});
-        }).bind(this)
-        firebase.database().ref('ScheduleCleaner').on('value',snapshot=>{
-            let data = [];            
-            snapshot.forEach(child=>{
-                let obj = {}
-                console.log('++--',child.val(),Object.values(child.val()))
-                obj.key = child.key;
-                obj.val = child.val();
-                data.push(obj);
-            })
-            this.setState({scheduleData: data, loading1: false});
-        }).bind(this)
-        firebase.database().ref('users/'+uid).on('value',snapshot=>{
-            let name = snapshot.child('firstname').val();
-            this.setState({name:name})
-        }).bind(this)
-    }
-    selectCleaner(key,phone){
-        let cleaner = this.state.scheduleData.filter(s=>{
-            return s.key === key
-        })
-        // console.log('++---CLEANER',Object.values(cleaner[0].val))
-        let data = []
-        if(cleaner.length>0) data = Object.values(cleaner[0].val)
-        let cleanerArray = [...this.state.selectedCleaner] ;
-        let phoneArray = [...this.state.selectedPhone]
-        let index = cleanerArray.indexOf(key);
-        let {cleaningType,day,time} = this.props.navigation.state.params.ServiceData
-        let data1=data.filter(d=>{
-            return d.day===day&&d.time===time
-        })
-        if(data1.length>0) {
-            alert('This cleaner has selected already in this time')
-            return
-        }
-       
-            if(cleanerArray.length>0&&index<0){
-                cleanerArray=[key]
-                phoneArray=[phone]
-            }else{
-                if(index>-1) {
-                    cleanerArray.splice(index, 1);
-                    phoneArray.splice(index,1)
+            fetch('http://31.131.25.57/api/api_getcleaner', {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        zipcode_valid:91205
+                    }),
+                })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                if(responseJson.error){
+                    this.setState({login_failed: true})
+                    return;
                 }
-                else {
-                   
-                    cleanerArray.push(key);
-                    phoneArray.push(phone);
+                if(responseJson.data==="false"){
+                    alert("Sorry, No Cleaner");
                 }
-            }
-       
-        
-        this.setState({selectedCleaner: cleanerArray, selectedPhone:phoneArray})
+                else{
+                    this.setState({cleanerData:responseJson.data})
+                    console.log(responseJson.data)
+
+                }
+            })
+            .catch((error) => {
+                alert(error);
+            });
     }
+    
     render(){
         let self = this
-        console.log('++--DATA',this.state.cleanerData)
         return(
             <View style={styles.container}>
                 <View style={styles.header}>
@@ -126,24 +90,25 @@ export default class Schedule extends Component {
                     <Text style={styles.headerTitle}>Cleaners</Text>
                 </View>
                 <View style={styles.servicetitle}>
-                    <Text style={styles.serviceText}>Select a Cleaner</Text>
+                    <Text style={styles.serviceText}>Do you have a preferred Cleaner?</Text>
                 </View>
-                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingHorizontal:10}}>
+                <Text style={styles.helpText}>I'd like any cleaner that is available during the day & time selected.</Text>
+                <Button text={'First Available'} style={{width: 160,marginVertical:15}} onPress={()=>this.Next()}/>
+                <Text style={styles.helpText}>Based on your selected date & time, the folowing cleaners are avaliable</Text>
+                <ScrollView contentContainerStyle={{paddingHorizontal:10}}>
                     {
                         this.state.cleanerData.map(cleaner=>{
                             return(
-                                <TouchableOpacity onPress={()=>{
-                                    this.setState({token: cleaner.val.token, cleanerName: cleaner.val.fullname})
-                                    this.selectCleaner(cleaner.key,cleaner.val.phone)}}>
-                                    <View style={self.state.selectedCleaner.indexOf(cleaner.key)>-1?styles.selectedCleanerView:styles.cleanerView}>
-                                        <Image source={{uri: cleaner.val.avatar}} style={{width:50,height:50,borderRadius:25}} />
-                                        <Text style={{marginLeft:18,fontSize:18}}>{cleaner.val.fullname}</Text>
+                                <TouchableOpacity onPress={()=>this.selectCleaner(cleaner.cleanerid)}>
+                                    <View style={self.state.selectedCleaner===cleaner.cleanerid?styles.selectedCleanerView:styles.cleanerView}>
+                                        <FastImage source={{uri: cleaner.photo}} style={{width:50,height:50,borderRadius:25}} />
+                                        <Text style={{marginLeft:18,fontSize:18}}>{cleaner.firstname + " " + cleaner.firstname}</Text>
                                         <View style={{position:'absolute',right: 5}}>
-                                            { cleaner.val.star?
+                                            { cleaner.feedback?
                                                 <StarRating 
                                                     disabled={true} 
                                                     maxStars={5} 
-                                                    rating={cleaner.val.star} 
+                                                    rating={cleaner.feedback} 
                                                     fullStarColor={'#9CDBB3'} 
                                                     starSize={15} 
                                                     emptyStarColor='#9CDBB3'
@@ -156,88 +121,59 @@ export default class Schedule extends Component {
                             )
                         })
                     }
-                    <Button text={'CONTINUE'} style={{marginVertical:15}} onPress={()=>this.Next()}/>
+                    
                 </ScrollView>
-                {
-                    this.state.loading||this.state.loading1?
-                    <View style={styles.loadinView}>
-                        <ActivityIndicator size='large' color='#41cab7' />
-                    </View>:null
-                }
+                <Button text={'Next'} style={{marginVertical:15}} onPress={()=>this.Next()}/>
+                
             </View>
         )
     }
+    selectCleaner(cleanerid){
+        this.setState({selectedCleaner: cleanerid})
+    }
     Next(){
         // alert(this.state.token+'============='+ this.state.cleanerName); return
-        if(this.state.selectedCleaner.length===0) return
-        const {ServiceData} = this.props.navigation.state.params;
-        ServiceData.cleaner = [...this.state.selectedCleaner]
-        let uid = firebase.auth().currentUser.uid;
-        let self = this
-        firebase.database().ref('users/'+uid+'/address').push(ServiceData)
-        this.state.selectedCleaner.forEach(c=>{
-            firebase.database().ref('ScheduleCleaner/'+c).push({
-                time: ServiceData.time,
-                day: ServiceData.day,
-                date: ServiceData.date,
-                user: uid,
-                username: self.state.name
-            })
-        })
+        //if(this.state.selectedCleaner) return
         
+        this.props.navigation.navigate('Special')
         
-        const params = {
-            "to" : this.state.token,
-            "notification": {
-                "title": "Cleaning Schedule",
-                "text": `Hi, ${this.state.cleanerName}, You are hired by ${this.state.name} `,
-                "sound": "default"
-            },
-            "priority": "high"
-        };
-        const headers = {
-            'Authorization': 'key=AIzaSyA-nQlPDHhrE1xWHi9Fmi03sAEX4IrBnzM',
-            'Content-Type': 'application/json'
-        }
-        if(this.state.token !== ''){
-            axios({
-                url: 'https://fcm.googleapis.com/fcm/send',
-                method: 'post',
-                headers: headers,
-                data: params
-            })
-        }
-           this.props.navigation.navigate('Payment')
-    //   Composer.composeMessageWithArgs(
-    //     {
-    //         'messageText':`Hey, You are selected for cleaning`,
-                            
-    //         'subject':'Order',
-    //         'recipients':this.state.selectedPhone,
-    //       'presentAnimated': true,
-    //       'dismissAnimated': false
-    //        },
-    //     (result) => {
-    //       switch(result) {
-    //         case Composer.Sent:
-    //           console.log('the message has been sent');
-              
-    //           break;
-    //         case Composer.Cancelled:
-    //           console.log('user cancelled sending the message');
-    //           break;
-    //         case Composer.Failed:
-    //           console.log('failed to send the message');
-    //           break;
-    //         case Composer.NotSupported:
-    //           console.log('this device does not support sending texts');
-    //           break;
-    //         default:
-    //           console.log('something unexpected happened');
-    //           break;
-    //       }
-    //     }
-    //   );
+        // const {ServiceData} = this.props.navigation.state.params;
+        // ServiceData.cleaner = [...this.state.selectedCleaner]
+        // let uid = firebase.auth().currentUser.uid;
+        // let self = this
+        // firebase.database().ref('users/'+uid+'/address').push(ServiceData)
+        // this.state.selectedCleaner.forEach(c=>{
+        //     firebase.database().ref('ScheduleCleaner/'+c).push({
+        //         time: ServiceData.time,
+        //         day: ServiceData.day,
+        //         date: ServiceData.date,
+        //         user: uid,
+        //         username: self.state.name
+        //     })
+        // })
+        // const params = {
+        //     "to" : this.state.token,
+        //     "notification": {
+        //         "title": "Cleaning Schedule",
+        //         "text": `Hi, ${this.state.cleanerName}, You are hired by ${this.state.name} `,
+        //         "sound": "default"
+        //     },
+        //     "priority": "high"
+        // };
+        // const headers = {
+        //     'Authorization': 'key=AIzaSyA-nQlPDHhrE1xWHi9Fmi03sAEX4IrBnzM',
+        //     'Content-Type': 'application/json'
+        // }
+        // if(this.state.token !== ''){
+        //     axios({
+        //         url: 'https://fcm.googleapis.com/fcm/send',
+        //         method: 'post',
+        //         headers: headers,
+        //         data: params
+        //     })
+        // }
+           
+    
     }
 
 }

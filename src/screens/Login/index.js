@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import {
   Platform,
   StyleSheet,
@@ -15,7 +16,7 @@ import styles from './styles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Button from '../../components/button';
 import firebase from 'firebase';
-export default class Login extends Component {
+class Login extends Component {
     static navigationOptions = {
         header: null
     }
@@ -27,26 +28,27 @@ export default class Login extends Component {
             emailValid: true,
             passwordValid: true,
             validStart: false,
-            loading: false,
-            login_failed:false
+            loginVaid:false
         }
     }
     render(){
         return(
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <TouchableOpacity onPress={()=>this.props.navigation.goBack()} style={styles.backIcon}>
+                    <TouchableOpacity onPress={()=>this.props.navigation.navigate('Home')} style={styles.backIcon}>
                         <Icon name='ios-arrow-back' size={40} color='#212123'/>
                     </TouchableOpacity>
-                    <Text style={styles.headerTitle}>Sign In</Text>
+                    <Text style={styles.logoText}>MODI</Text>
                 </View>
+                <View style={styles.TitleText}>
+                    <Text style={styles.Welcome}>Hi!</Text>
+                </View>             
                 {
-                    this.state.login_failed?
+                    this.state.loginVaid===true?
                     <View style={styles.validView}>
-                        <Text>Your email address and password do not match.</Text>
+                        <Text>Wrong information</Text>
                     </View>:null
-                }                
-
+                }
                 <View style={styles.inputView}>
                     <TextInput 
                         onChangeText={(email)=>this.email(email)}
@@ -77,48 +79,91 @@ export default class Login extends Component {
                 {
                     this.state.passwordValid&&this.state.validStart?
                     <View style={styles.validView}>
-                        <Text>Please enter a password.</Text>
+                        <Text>The Password must be at least 6 characters long</Text>
                     </View>:null
                 }
                 
                 <Button text={'Sign In'} style={{marginTop:35}} onPress={()=>this.Login()}/>
-                <Text onPress={()=>this.props.navigation.navigate('Forgot')} style={styles.forgotTitle}>Forgot your password?</Text>
-                {
-                    this.state.loading?
-                    <View style={styles.loadinView}>
-                        <ActivityIndicator size='large' color='#41cab7' />
-                    </View>:null
-                }
+                <Text onPress={()=>this.props.navigation.navigate('Forgot')} style={styles.forgotTitle}>Forgot your password?</Text>                
             </View>
         )
     }
     Login(){
         this.setState({validStart: true})
         if(this.state.emailValid||this.state.passwordValid) return
-        this.setState({loading: true})
-        firebase.auth().signInWithEmailAndPassword(this.state.email,this.state.password)
-        .then(()=>{
-            this.setState({loading: false})
-            this.props.navigation.navigate('Setting');
+
+
+        fetch('http://31.131.25.57/api/api_login', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: this.state.email,
+                password: this.state.password
+            }),
         })
-        .catch(error=>{
-            //alert(error.message)
-            this.setState({login_failed:true})
-            this.setState({loading: false})
-        })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                console.log(responseJson)
+                if(responseJson.flag === "success"){
+                    this.props.formDataStor(responseJson.data);
+                    this.props.BookingInfoStore(responseJson.bookingInfo);
+                    this.props.navigation.navigate('Setting');
+                }
+                else{
+                    this.setState({loginVaid:true})
+                }
+            })
+            .catch((error) => {
+                alert(error);
+            });
+        
     }
     email(email){
         this.setState({email: email})
         var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if(re.test(email)){
-            this.setState({emailValid: false,login_failed:false})
+            this.setState({emailValid: false,login_failed:false,loginVaid:false})
         }else{
-            this.setState({emailValid: true,login_failed:false})
+            this.setState({emailValid: true,login_failed:false,loginVaid:false})
         }
         
     }
     password(pass){
-        if(pass.length===0) this.setState({password: pass, passwordValid: true,login_failed:false})
-        else this.setState({password: pass, passwordValid: false,login_failed:false})
+        if(pass.length<6) this.setState({password: pass, passwordValid: true,login_failed:false})
+        else this.setState({password: pass, passwordValid: false,login_failed:false,loginVaid:false})
     }
 }
+
+
+
+const mapStateToProps = (state) => {
+    return {
+        userinfo: state.userinfo.user
+    }
+}
+const mapDispatchToProps = (dispatch) => {
+    return {
+        formDataStor: (data) => {
+            dispatch({
+                type: 'info_store',
+                value: data
+            })
+        },
+        costinfostore: (data) => {
+            dispatch({
+                type: 'costinfo_store',
+                value: data
+            })
+        },
+        BookingInfoStore: (data) => {
+            dispatch({
+                type: 'Bookinginfo_store',
+                value: data
+            })
+        }
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Login) 

@@ -5,17 +5,18 @@ export default StyleSheet.create({
     container:{
         flex:1,
         backgroundColor:'#ffffff',
-        paddingTop: 30
+        
     },
     header: {
-        height: 60,
+        paddingTop: 30,
+        height: 90,
         width: width,
-        backgroundColor:'#fff',
+        backgroundColor:'#000',
         flexDirection: 'row',
         justifyContent:  'center',
         alignItems: 'center',
         borderBottomColor: 'rgba(33,33,33,0.4)',
-        borderBottomWidth:0.5
+        borderBottomWidth:0.5,
     },
     servicetitle: {
         height: 60,
@@ -28,20 +29,29 @@ export default StyleSheet.create({
     },
     serviceText:{        
         fontSize: 20,
+        height:70,
         fontWeight: '500',
         color: '#686868',
-        width: width-50,
-        textAlign: 'center'
-
+        width: width,
+        textAlign: 'center',
+        borderBottomColor: 'rgba(33,33,33,0.4)',
+        borderBottomWidth:1.5,
+        padding:10
     },
     backIcon: {
         position: 'absolute',
+        top:40,
         left: 16
+    },
+    CloseIcon: {
+        position: 'absolute',
+        top:43,
+        right: 16
     },
     headerTitle: {
         fontSize: 24,
         fontWeight: '500',
-        color: '#212123'
+        color: '#FFF'
     },
     title: {
         fontSize: 16,
@@ -86,49 +96,57 @@ export default StyleSheet.create({
         fontWeight: 'bold',        
         color:'#212123'
     },
-    cleaningTypeView: {
-        width: width-60,
-        height: 60,
-        borderBottomColor: '#212123',
-        borderBottomWidth: 1,
+    helpText:{
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#686868',
+        width: width,
+        paddingLeft:20,
+        paddingRight:20,
+        marginVertical:10,
+    },
+    BtnView:{
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',        
-        borderRadius: 20,     
+        justifyContent: 'center',
+        alignItems:'center',
+        textAlign:'center',
+        paddingVertical: 10,
+        width:width,
+        position:'absolute',
+        bottom:30
+    },
+    BarView:{
+        height:5,
+        borderBottomColor: 'rgba(33,33,33,0.4)',
+        borderBottomWidth:1,
+    },
+    cleaningTypeView: {
+        width: (width-100)/2,
+        height: 50,
+        flexDirection: 'row',
+        alignItems: 'center', 
         marginBottom: 7,
         opacity: 0.8
     },
     cleaningTypeView_active: {
-        width: width-60,
-        height: 60,
-        borderBottomColor: '#e3fff9',
-        borderBottomWidth: 1,
+        width: width,
         flexDirection: 'row',
-        borderRadius: 20,        
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        marginBottom: 7,        
-        backgroundColor: '#e3fff9',  
-        shadowColor: '#e3fff9',      
-        shadowOffset:{
-            width:0,
-            height:5
-        },        
-        shadowRadius: 5,
-        shadowOpacity:1,
-        elevation:2       
+        alignItems: 'center', 
+        opacity: 0.8 ,
+        padding:15  
     },
     typeText: {
-        fontSize: 20,
-        fontWeight:'400',
+        fontSize: 14,
+        fontWeight:'300',
         color: '#212123',
-        width:width-160,
+        //width:width-160,
+        marginLeft:10
     },
     typeContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-around',
-        paddingVertical: 10
+        paddingVertical: 20
     },
     typeDescription: {
         color: '#212123',
@@ -213,6 +231,10 @@ export default StyleSheet.create({
         shadowRadius: 5,
         shadowOpacity:1,
         elevation:3 
+    },    
+    serviceImage:{
+        width:40,
+        height:60,
     }
     
     

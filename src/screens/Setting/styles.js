@@ -5,12 +5,12 @@ export default StyleSheet.create({
     container:{
         flex:1,
         backgroundColor:'#fff',
-        paddingTop: 30
     },
     header: {
-        height: 60,
+        paddingTop: 30,
+        height: 90,
         width: width,
-        backgroundColor:'#fff',
+        backgroundColor:'#000',
         flexDirection: 'row',
         justifyContent:  'center',
         alignItems: 'center',
@@ -20,19 +20,22 @@ export default StyleSheet.create({
     },
     backIcon: {
         position: 'absolute',
-        right: 16
+        top:40,
+        left: 16
     },
     headerTitle: {
-        fontSize: 50,
+        fontSize: 38,
         fontWeight: '500',
         color: '#000',
-        marginLeft: 20,
+        marginLeft: 30,
+        marginVertical:15,
         fontFamily: 'Times New Roman'
     },
     headerTitle_home: {
-        fontSize: 24,
+        fontSize: 30,
         fontWeight: '500',
-        color: '#212123'
+        color: '#FFF',
+        fontFamily: 'Times New Roman'
     },
     title: {
         fontWeight:'300',
@@ -113,9 +116,9 @@ export default StyleSheet.create({
         alignSelf: 'center'
     },
     drawerContent:{
-        //width:width*2/3,
+        //width:200,
         height: height,
-        backgroundColor:'rgba(244,236,224,1)',
+        backgroundColor:'#fff',
         shadowColor: 'black',      
         shadowOffset:{
             width:-5,
@@ -132,25 +135,32 @@ export default StyleSheet.create({
         alignItems: 'center',
         paddingLeft:12
     },
+    icons:{
+        marginRight:15,
+        marginTop:5
+    },
     menuView: {
         flexDirection:'row',
+        justifyContent: 'space-between',
         alignItems:'center',
-        width:'100%',
-        paddingVertical:15,
+        //width:200,
+        paddingVertical:5,
         backgroundColor:'white',
         paddingLeft: 20
     },
     BottomBorder: {
         borderBottomColor: 'rgba(0,0,0,0.3)',
         borderBottomWidth: 0.5,
-        width:width*2/3-40,
+        width:'100%',
+        //width:width*2/3-40,
         alignSelf: 'flex-end'
     },
     menuText: {
         color: '#212123',
         fontSize: 16,
+        width:155,
         fontWeight: '300',
-        marginLeft: 20
+        //marginLeft: 12
     },
     loadinView: {
         flex: 1,
@@ -176,7 +186,72 @@ export default StyleSheet.create({
         width: width-150,
         marginTop:20,
         alignSelf:'center'
+    },
+    image: {
+        width:width-80,
+        height:180,
+        justifyContent:'center',
+        alignItems: 'center',
+        borderRadius: 8, 
+    },
+    addressView:{
+        width: width,
+        justifyContent:  'center',
+        alignItems: 'center',
+        backgroundColor:'#f7f7f7',
+        marginVertical:35
+    },
+    AptTilte:{
+        position: 'absolute',
+        color:'#FF0000',
+        fontSize: 18,
+        fontWeight:'300',
+        bottom: 35,
+        left: 50,
+    },
+    AptAddress:{
+        position: 'absolute',
+        color:'#FF0000',
+        bottom: 15,
+        left: 50       
+    },
+    BtnView:{
+        height:100
+    },
+    TitleText:{
+        width: width,
+        justifyContent:  'center',
+    },
+    Welcome:{
+        fontSize: 24,
+        fontWeight: '700',
+        color: '#000',
+        paddingLeft:20,
+        paddingVertical:10
+        
+    },
+    MsgText:{
+        fontSize: 16,
+        fontWeight: '500',
+        color: '#000',
+        paddingLeft:20,
+        paddingVertical:10
+        
+    },
+    cleaningTypeView_active: {
+        width: width,
+        height:60,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center', 
+        backgroundColor: '#e3fff9',  
+        paddingLeft:26,
+        paddingRight:26,
+    },
+    typeText: {
+        fontSize: 20,
+        fontWeight:'400',
+        color: '#212123',
     }
-    
     
 })

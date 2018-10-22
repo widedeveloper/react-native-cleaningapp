@@ -242,7 +242,30 @@ export default StyleSheet.create({
         backgroundColor: '#fff',
         alignItems:'center',
         justifyContent:'center'
-    }
-    
+    },
+    addbtn:{
+        width:60,
+        alignItems:'flex-end',
+        position: 'absolute',
+        right: 16
+    },
+    decbtn:{
+        width:60,
+        position: 'absolute',
+        left: 16
+    },
+    StartEndDate:{
+        color: '#00a991',
+        fontSize: 22,
+        fontWeight: '500',
+    },
+    ScheduledateView: {
+        paddingHorizontal: 8,
+        alignSelf: 'center',
+        justifyContent: 'center',
+        width: width,
+        justifyContent:'center',
+        alignItems:'center'
+    },
     
 })

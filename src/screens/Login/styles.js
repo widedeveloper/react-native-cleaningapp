@@ -5,12 +5,12 @@ export default StyleSheet.create({
     container:{
         flex:1,
         backgroundColor:'#FFFFFF',
-        paddingTop: 30
     },
     header: {
-        height: 60,
+        paddingTop: 30,
+        height: 90,
         width: width,
-        backgroundColor:'#FFFFFF',
+        backgroundColor:'#000',
         flexDirection: 'row',
         justifyContent:  'center',
         alignItems: 'center',
@@ -20,7 +20,14 @@ export default StyleSheet.create({
     },
     backIcon: {
         position: 'absolute',
+        top:35,
         left: 16
+    },
+    logoText:{
+        fontSize: 30,
+        fontWeight: '500',
+        color: '#FFF',
+        fontFamily: 'Times New Roman'
     },
     headerTitle: {
         fontSize: 24,
@@ -44,6 +51,19 @@ export default StyleSheet.create({
         borderBottomWidth: 1,
         justifyContent: 'center',
         
+    },
+    TitleText:{
+        width: width,
+        justifyContent:  'center',
+        alignItems: 'center',
+        marginTop:20
+    },
+    Welcome:{
+        fontSize: 24,
+        fontWeight: '700',
+        color: '#000',
+        alignItems: 'center',
+        textAlign:'center'
     },
     textInput: {
         

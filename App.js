@@ -9,15 +9,18 @@ import {
   Dimensions,
   WebView
 } from 'react-native';
+import { connect } from 'react-redux';
 import AppScreen from './src'
 
 type Props = {};
-export default class App extends Component<Props> {
+class App extends Component<Props> {
   render() {
     return (
       <AppScreen />
     );
   }
 }
+
+export default App
 
 

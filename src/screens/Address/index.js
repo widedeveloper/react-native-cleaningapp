@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+    Container,
   Platform,
   StyleSheet,
   Text,
@@ -10,18 +11,19 @@ import {
   TextInput,
   ScrollView,
   ActivityIndicator,
-  TouchableHighlight
+  TouchableHighlight,
+  KeyboardAvoidingView
 } from 'react-native';
 
 import styles from './styles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Button from '../../components/button';
-import firebase from 'firebase';
 import axios from 'axios';
 import QS from 'qs';
-import IOSPicker from 'react-native-ios-picker'
-const{width}=Dimensions.get('window')
-
+import IOSPicker from 'react-native-ios-picker';
+import FastImage from 'react-native-fast-image';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 export default class Login extends Component {
     static navigationOptions = {
         header: null
@@ -29,68 +31,10 @@ export default class Login extends Component {
     constructor(props){
         super(props)
         this.state={
-            address: '',
-            zipcode: '',
-            unit: '',
-            data: [],
-            locationname: '',
-            addressvalid: true,
-            city: ['Click here to find out'],
-            complex: '',
-            value: '',
-            loading: true,
-            showCity: false,
-            showComplex: false,
-            zipcodevalid: true,
-            showAddress: false,
-            correctAddress: false
+            AptNum: '',
         }
     }
-    componentWillMount(){
-        let city=['Not Yet'], complex = [];
-        firebase.database().ref('Region').on('value',snapshot=>{
-            let obj = {}
-            let city1 = []
-            if(snapshot.child(`${this.props.navigation.state.params.zipcode}`).val()!==null){
-                city1 = snapshot.child(`${this.props.navigation.state.params.zipcode}`).val();
-            }
-            console.log('++---snapshot',snapshot.child(`${this.props.navigation.state.params.zipcode}`).val())
-           let city2=city.concat(city1)
-            this.setState({city:this.state.city.concat(city2),loading: false})
-        }).bind(this)
-    }
-    getDescription=(item)=>{
-        console.log('++--',item)
-        this.setState({address: item.description, data:[]})
-        let query = {
-            key: 'AIzaSyCVUAFwJyIucwikjyHMmcM9srKk2nKdZn8',
-            language: 'en',
-            types: 'address'
-        };
-        let url = 'https://maps.googleapis.com/maps/api/place/details/json?'+QS.stringify({
-            placeid: item.place_id,
-            key: query.key            
-            
-        })
         
-            axios.get(url)
-            .then(responseJson=>{
-                // console.log('++--',responseJson.data)
-                // this.setState({data: responseJson.data.predictions})
-                let zipcode=responseJson.data.result.address_components.filter(d=>{
-                    // console.log('------=-=-=',d.types[0])
-                    return d.types[0]==='postal_code'
-                })[0]
-                if(!zipcode) this.setState({addressvalid: false, zipcode:''})
-                else this.setState({addressvalid: true,zipcode: zipcode.long_name})
-            })
-            .catch(error=>{
-                alert(error)
-            })
-    }
-
-    
-    
     render(){
         const data = this.state.city
         // alert(this.state.city)
@@ -98,160 +42,50 @@ export default class Login extends Component {
         console.log('++--OBJECT',this.state.city, this.state.complex)
         if(this.props.navigation.state.params === undefined) this.props.navigation.state.params={param: false}
         return(
+            
             <View style={styles.container}>
                 <View style={styles.header}>                    
                     <TouchableOpacity onPress={()=>this.props.navigation.goBack()} style={styles.backIcon}>
                         <Icon name='ios-arrow-back' size={40} color='#212123'/>
                     </TouchableOpacity>
-                    <Text style={styles.headerTitle}>Address</Text>
+                    <Text style={styles.headerTitle}>Details</Text>
                 </View>
+                <KeyboardAvoidingView behavior="position" >
                 <View style={styles.servicetitle}>
-                    <Text style={styles.serviceText}>Do you reside at one of our partner properties?</Text>
+                    <Text style={styles.serviceText}>What is your apartment number?</Text>
                 </View>
-                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 30}}>
-                    
-                        {/* <TouchableHighlight onPress={()=>{this.setState({showCity: true})}} underlayColor='transparent'>
-                            <View style={[styles.inputView,{width:width-32}]}>
-                                <TextInput 
-                                    placeholder='City'
-                                    onChangeText={(complex)=>this.complex(complex)}
-                                    underlineColorAndroid = 'transparent'
-                                    value = {this.state.complex}
-                                    style = {styles.textInput}
-                                    editable={false}
-                                    
-                                />
-                            </View>
-                        </TouchableHighlight> */}
-                        <IOSPicker 
-                            data={data}
-                            onValueChange={(d, i)=> this.setState({complex:d,addressvalid:true})}
-                            style = {[styles.inputView]}
-                            textStyle = {{fontSize: 22}}
-                        />
-                    
-
-                   
-
-                    {
-                        !this.state.addressvalid?
-                        <View style={styles.validView}>
-                            <Text>Please select your Complex.</Text>
-                        </View>:null
-                    }
-                    {
-                        this.state.city.length>0&&this.state.showCity?
-                        this.state.city.map(item=>{
-                            return(
-                                <TouchableOpacity onPress={()=>this.setState({complex:item,showCity: false, addressvalid: true})}>
-                                    <View style={styles.locationPreview}>
-                                        <Icon name='ios-pin' size={20} color='rgba(0,0,0,0.3)' />
-                                        <Text style={styles.locationName}>{item}</Text>
-                                    </View>
-                                </TouchableOpacity>
-                            )
-                        }):null
-                    }
-                    
-                    {this.state.complex!=='Not Yet'&&this.state.complex.length>0?
-                    <View style={[styles.inputView,{marginTop:25}]}>
-                        <TouchableOpacity onPress={()=>this.setState({showComplex: true})}>
-                            <TextInput 
-                                placeholder='Apt-#'
-                                onChangeText={(unit)=>this.setState({unit: unit})}
-                                underlineColorAndroid = 'transparent'
-                                value = {this.state.unit}
-                                style = {styles.textInput}                                
-                                
-                            />
-                        </TouchableOpacity>
-                    </View>:null}
-                    {
-                        !this.state.zipcodevalid&&this.state.city.indexOf('Not Yet')<0?
-                        <View style={styles.validView}>
-                            <Text>Please select your Apt/Unit.</Text>
-                        </View>:null
-                    }                    
-                   
-                    
-                    {this.state.complex==='Not Yet'?
-                    <View style={[styles.inputView,{marginTop:25}]}>
-                        <TextInput 
-                            placeholder='Address'
-                            onChangeText={(address)=>this.address(address)}
+                <View style={styles.addressView}>
+                    <FastImage resizeMode='stretch' style={styles.image} source={{uri: "https://res.cloudinary.com/apartmentlist/image/upload/t_fullsize/09762eb545bc74de4ee81b79b95d5920.jpg"}} />
+                    <Text style={styles.AptTilte}>90005</Text>
+                    <Text style={styles.AptAddress}>620 South VIRGIL Avenue</Text>
+                </View>
+                <View style={styles.inputView}>
+                        <TextInput
+                            placeholder='Apt, Suite, etc (optional)' 
+                            onChangeText={(AptNum)=>this.AptNum(AptNum)}
                             underlineColorAndroid = 'transparent'
-                            value = {this.state.address}
+                            value = {this.state.AptNum}
                             style = {styles.textInput}
-                            
                         />
-                    </View>:null  }              
-                    {
-                        this.state.data.length>0&&this.state.showAddress?
-                        this.state.data.map(item=>{
-                            return(
-                                <TouchableOpacity onPress={()=>this.setState({address: item.description,showAddress:false,correctAddress: true})}>
-                                    <View style={styles.locationPreview}>
-                                        <Icon name='ios-pin' size={20} color='rgba(0,0,0,0.3)' />
-                                        <Text style={styles.locationName}>{item.description}</Text>
-                                    </View>
-                                </TouchableOpacity>
-                            )
-                        }):null
-                    }
-                    <Button text={'CONTINUE'} style={{marginTop:35}} onPress={()=>this.Login()}/>
-                </ScrollView>
+                </View>
                 {
-                    this.state.loading?
-                    <View style={styles.loadinView}>
-                        <ActivityIndicator size='large' color='#41cab7' />
+                    this.state.firstnameValid&&this.state.validStart?
+                    <View style={styles.validView}>
+                        <Text>Please enter your Apt Number.</Text>
                     </View>:null
                 }
-            </View>
+                <View style={{marginTop:60}}>
+                <Button text={'Next'} onPress={()=>this.submitBtn()}/>
+                </View>
+                </KeyboardAvoidingView>
+             </View>
         )
     }
-    address(location){
-        this.setState({address: location,addressvalid: true, showAddress: true})
-        let query = {
-            key: 'AIzaSyCVUAFwJyIucwikjyHMmcM9srKk2nKdZn8',
-            language: 'en',
-            types: 'address'
-        };
-        let url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?'+QS.stringify({
-            key: query.key,
-            input: location,
-            types: 'address',
-            components:'country:us'
-        })
-        
-            axios.get(url)
-            .then(responseJson=>{
-                console.log('++--',responseJson.data)
-                this.setState({data: responseJson.data.predictions})
-            })
-            .catch(error=>{
-                alert(error)
-            })
-        
+    AptNum(AptNum){
+        this.setState({AptNum: AptNum})
     }
-    Login(){
-        if(this.state.complex==='Click here to find out') return
-        if(this.state.complex==='') {
-            this.setState({addressvalid: false})
-            return        }      
-        if(!this.state.correctAddress&&(this.state.complex==='Not Yet')) return
-       if(this.state.complex!=='Not Yet'&&'Click here to find out'&&this.state.unit==='') return
-        if(this.props.navigation.state.params.param) {
-            this.props.navigation.navigate('AddressList')
-            return
-        }
-        let AddressData = {
-            zipcode: this.props.navigation.state.params.zipcode,
-            complex: this.state.complex==='Not Yet'?'':this.state.complex,
-            unit: this.state.unit,
-            address: this.state.address,
-            loggedin: this.props.navigation.state.params.loggedin
-        }
-        this.props.navigation.navigate('Service',{AddressData: AddressData});
-        this.setState({complex:'',address: '',unit: ''})
+    submitBtn(){
+        this.props.navigation.navigate('Service')   
+        // this.props.navigation.navigate('Signup')    
     }
 }

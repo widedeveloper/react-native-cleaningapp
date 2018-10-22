@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import {
   Platform,
   StyleSheet,
@@ -15,18 +16,17 @@ import {
 import styles from './styles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Button from '../../components/button'
-export default class Schedule extends Component {
+
+
+class Service extends Component {
     static navigationOptions = {
         header: null
     }
     constructor(props){
         super(props)
+        const userInfo = this.props.userinfo;
         this.state={
-            email: '',
-            password: '',
-            cleaningType: 2,
-            howoften: 0,
-            moreOptionModal: false
+            userInfo:userInfo
         }
     }
     render(){
@@ -35,50 +35,79 @@ export default class Schedule extends Component {
             <View style={styles.container}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={()=>goBack()} style={styles.backIcon}>
-                        <Icon name='ios-arrow-back' size={40} color='#212123'/>
+                        <Icon name='ios-arrow-back' size={40} color='#FFF'/>
                     </TouchableOpacity>
-                    <Text style={styles.headerTitle}>Service</Text>
+                    <Text style={styles.headerTitle}>Cleaning</Text>
+                    <TouchableOpacity onPress={()=>this.props.navigation.navigate('Setting')} style={styles.CloseIcon}>
+                        <Icon name='md-close' size={35} color='#FFF'/>
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.servicetitle}>
-                    <Text style={styles.serviceText}>What kind of service would you like?</Text>
+                    <Text style={styles.serviceText}>What type of cleaning do you want?</Text>
                 </View>
-                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingHorizontal:18}}>
+                <View>
+                    <Text style={styles.HelpText}>Rad.</Text>
+                    <Text style={styles.HelpText}>You have 1 credit left this month!</Text>
+                </View>
+                <View style={styles.servicetitle}>
+                    <Text style={styles.serviceText}>{"Cleaning for "+this.state.userInfo.userInfo.address + ".Apt."+this.state.userInfo.userInfo.apart_num}</Text>
+                </View>
                     <View style={styles.typeContainer}>
-                        <TouchableOpacity onPress={()=>this.setState({cleaningType:1,howoften:0})}>
-                            <View style={this.state.cleaningType===1?styles.cleaningTypeView_active:styles.cleaningTypeView}>
-                                <Icon name='ios-woman' size={60}  />
-                                <Text style={styles.typeText}>$40 / 2 hour{'\n'}No add-ons{'\n'}Cleaning</Text>
+                        <TouchableOpacity onPress={()=>this.service(1)}>
+                            <View style={styles.cleaningTypeView_active}>
+                                <Text style={styles.typeText}>Basic Clean</Text>
+                                <Icon name='ios-arrow-forward' size={30} color='#212123'/>
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={()=>this.setState({cleaningType:2,howoften:0})}>
-                            <View style={this.state.cleaningType===2?styles.cleaningTypeView_active:styles.cleaningTypeView}>
-                                <Icon name='ios-woman' size={60}  />
-                                <Text style={styles.typeText}>$80 / 2 hour{'\n'}2 add-ons{'\n'}Cleaning</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={()=>this.setState({cleaningType:3,howoften:0})}>
-                            <View style={this.state.cleaningType===3?styles.cleaningTypeView_active:styles.cleaningTypeView}>
-                                <Icon name='ios-woman' size={60}  />
-                                <Text style={styles.typeText}>$120 / 3 hour{'\n'}4 add-ons{'\n'}Cleaning</Text>
+                        <TouchableOpacity onPress={()=>this.service(2)}>
+                            <View style={styles.cleaningTypeView_active}>
+                                <Text style={styles.typeText}>Deep Clean</Text>
+                                <Icon name='ios-arrow-forward' size={30} color='#212123'/>
                             </View>
                         </TouchableOpacity>
                     </View>
-                    <Button text={'CONTINUE'} style={{marginVertical:15}} onPress={()=>this.Next()}/>
-                </ScrollView>
-                
             </View>
         )
     }
-    Next=()=>{
-        const {AddressData} = this.props.navigation.state.params;        
-        AddressData.cleaningType = this.state.cleaningType;
-        // console.log('++---',AddressData)
-        if(this.state.cleaningType===1){
-            if(AddressData.loggedin) this.props.navigation.navigate('Schedule',{ServiceData: AddressData})
-            else this.props.navigation.navigate('Signup',{ServiceData: AddressData})
+    service(id){
+        if(id===1){
+            let data = {
+                CleanType:"Basic Clean",
+                Extra:[]
+            }
+            this.props.BookingDataStore(data)
+            this.props.navigation.navigate('DateSet')
         }else{
-            this.props.navigation.navigate('Extras',{ServiceData: AddressData})
+            let data = {
+                CleanType:"Deep Clean"
+            }
+            this.props.BookingDataStore(data)
+            this.props.navigation.navigate('DeepDetail')
+        }
+        
+    }
+}
+
+
+const mapStateToProps = (state) => {
+    return {
+        userinfo: state.userinfo.user
+    }
+}
+const mapDispatchToProps = (dispatch) => {
+    return {
+        formDataStor: (data) => {
+            dispatch({
+                type: 'info_store',
+                value: data
+            })
+        },
+        BookingDataStore: (data) => {
+            dispatch({
+                type: 'BookingData_store',
+                value: data
+            })
         }
     }
-
 }
+export default connect(mapStateToProps, mapDispatchToProps)(Service) 

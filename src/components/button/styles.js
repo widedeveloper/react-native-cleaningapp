@@ -7,7 +7,7 @@ export default StyleSheet.create({
     container:{
         width: width-60,
         backgroundColor:'#9CDBB3',
-        borderRadius: 8,
+        borderRadius: 1,
         justifyContent: 'center',
         alignItems: 'center',
         alignSelf :'center',

@@ -5,21 +5,27 @@ export default StyleSheet.create({
     container:{
         flex:1,
         backgroundColor:'#FFFFFF',
-        paddingTop: 30
+        paddingTop: 90,
     },
     header: {
-        height: 60,
+        height: 90,
+        paddingTop:30,
         width: width,
+        position:"absolute",
+        left:0,
+        top:0,
         backgroundColor:'#fff',
         flexDirection: 'row',
         justifyContent:  'center',
         alignItems: 'center',
         borderBottomColor: 'rgba(33,33,33,0.4)',
-        borderBottomWidth:0.5
+        borderBottomWidth:0.5,
+        zIndex:10000
     },
     backIcon: {
         position: 'absolute',
-        left: 16
+        left: 16,
+        top:40,
     },
     headerTitle: {
         fontSize: 24,
@@ -122,6 +128,41 @@ export default StyleSheet.create({
         width: width,
         height: height,
         backgroundColor: 'rgba(0,0,0,0.1)'
+    },
+    image: {
+        width:width-80,
+        height:180,
+        justifyContent:'center',
+        alignItems: 'center',
+        borderRadius: 8, 
+    },
+    addressView:{
+        width: width,
+        justifyContent:  'center',
+        alignItems: 'center',
+        backgroundColor:'#f7f7f7',
+        marginVertical:35
+    },
+    AptTilte:{
+        position: 'absolute',
+        color:'#FFF',
+        fontSize: 18,
+        fontWeight:'300',
+        bottom: 35,
+        left: 50
+    },
+    AptAddress:{
+        position: 'absolute',
+        color:'#FFF',
+        bottom: 15,
+        left: 50       
+    },
+    BtnView:{
+        position: 'absolute',
+        width:width,
+        justifyContent:  'center',
+        alignItems: 'center',
+        bottom: 50,
     }
     
     

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import {
   Platform,
   StyleSheet,
@@ -18,142 +19,157 @@ import Button from '../../components/button';
 const data = [
     {
         type: 1,
-        title: 'Clean inside cabinets'
+        title: 'Oven',
     },
     {
         type: 2,
-        title: 'Oven'
+        title: 'Interior windows',
     },
     {
         type: 3,
-        title: 'Fridge'
+        title: 'Refrigerator',
     },
     {
         type: 4,
-        title: 'Interior Windows'
-    },
-    {
-        type: 5,
-        title: 'Laundry wash & dry'
-    },
+        title: 'Pantry',
+    }
 ]
-export default class Schedule extends Component {
+class Extras extends Component {
     static navigationOptions = {
         header: null
     }
     constructor(props){
         super(props)
+        const { bookingdata } = this.props.userinfo;
         this.state={
-            email: '',
-            password: '',
-            cleaningType: 2,
-            howoften: 0,
-            moreOptionModal: false,
-            addone1:false,
-            addone2:false,
-            addone3:false,
-            addone4:false,
-            addone5:false,
-            extra: []
+            extra: [],
+            bookingdata:bookingdata
         }
     }
     selectExtra(type){
-        let extraArray = [...this.state.extra];
-        let index = extraArray.indexOf(type);
-        const {ServiceData} = this.props.navigation.state.params;
-        if(ServiceData.cleaningType === 2){
-            if(extraArray.length===2&& index>-1){
-                if(type===1) this.setState({addone1: !this.state.addone1})
-                if(type===2) this.setState({addone2: !this.state.addone2})
-                if(type===3) this.setState({addone3: !this.state.addone3})
-                if(type===4) this.setState({addone4: !this.state.addone4})
-                if(type===5) this.setState({addone5: !this.state.addone5})
-                extraArray.splice(index,1)
-            }
-            if(extraArray.length<2&&index<0){
-                if(type===1) this.setState({addone1: !this.state.addone1})
-                if(type===2) this.setState({addone2: !this.state.addone2})
-                if(type===3) this.setState({addone3: !this.state.addone3})
-                if(type===4) this.setState({addone4: !this.state.addone4})
-                if(type===5) this.setState({addone5: !this.state.addone5})
-                extraArray.push(type)
-            }
-            if(extraArray.length<2&& index>-1){
-                if(type===1) this.setState({addone1: !this.state.addone1})
-                if(type===2) this.setState({addone2: !this.state.addone2})
-                if(type===3) this.setState({addone3: !this.state.addone3})
-                if(type===4) this.setState({addone4: !this.state.addone4})
-                if(type===5) this.setState({addone5: !this.state.addone5})
-                extraArray.splice(index,1)
-            }
-            this.setState({extra: extraArray})
-        }else{
-            if(extraArray.length===4&& index>-1){
-                if(type===1) this.setState({addone1: !this.state.addone1})
-                if(type===2) this.setState({addone2: !this.state.addone2})
-                if(type===3) this.setState({addone3: !this.state.addone3})
-                if(type===4) this.setState({addone4: !this.state.addone4})
-                if(type===5) this.setState({addone5: !this.state.addone5})
-                extraArray.splice(index,1)
-            }
-            if(extraArray.length<4&&index<0){
-                if(type===1) this.setState({addone1: !this.state.addone1})
-                if(type===2) this.setState({addone2: !this.state.addone2})
-                if(type===3) this.setState({addone3: !this.state.addone3})
-                if(type===4) this.setState({addone4: !this.state.addone4})
-                if(type===5) this.setState({addone5: !this.state.addone5})
-                extraArray.push(type)
-            }
-            if(extraArray.length<4&& index>-1){
-                if(type===1) this.setState({addone1: !this.state.addone1})
-                if(type===2) this.setState({addone2: !this.state.addone2})
-                if(type===3) this.setState({addone3: !this.state.addone3})
-                if(type===4) this.setState({addone4: !this.state.addone4})
-                if(type===5) this.setState({addone5: !this.state.addone5})
-                extraArray.splice(index,1)
-            }
-            this.setState({extra: extraArray})
+        var extra_count = 4;
+        extras=this.state.extra;
+        var index = extras.indexOf(type);
+        if(index>-1){
+            extras.splice(index,1);
+            this.setState({extra:extras});
+            return
         }
+        if( this.state.extra.length===extra_count) return
+        
+        extras.push(type)
+        this.setState({extra:extras});
     }
     render(){
         return(
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <TouchableOpacity onPress={()=>this.props.navigation.navigate('Service')} style={styles.backIcon}>
-                        <Icon name='ios-arrow-back' size={40} color='#212123'/>
+                    <TouchableOpacity onPress={()=>this.props.navigation.goBack()} style={styles.backIcon}>
+                        <Icon name='ios-arrow-back' size={40} color='#FFF'/>
                     </TouchableOpacity>
-                    <Text style={styles.headerTitle}>Extras</Text>
+                    <Text style={styles.headerTitle}>Deep cleaning</Text>
+                    <TouchableOpacity onPress={()=>this.props.navigation.navigate('Setting')} style={styles.CloseIcon}>
+                        <Icon name='md-close' size={35} color='#FFF'/>
+                    </TouchableOpacity>
                 </View>
-                <View style={styles.servicetitle}>
-                    <Text style={styles.serviceText}>Add-Ons and Special requests</Text>
-                </View>
-                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingHorizontal:18}}>
+                {/* <View style={styles.servicetitle}>
+                    <Text style={styles.serviceText}>You've chosen a Late Afternoon Deep Cleaning next on Wed, Sept 26th.</Text>
+                </View> */}
+                <Text style={styles.serviceText}>Specifically, what would you like deep cleaned?</Text>
+                
+                
                     <View style={styles.typeContainer}>
                         {
                             data.map(d=>{
                                 return(
                                      <TouchableOpacity onPress={()=>this.selectExtra(d.type)}>
-                                        <View style={this.state.extra.indexOf(d.type)>-1?styles.cleaningTypeView_active:styles.cleaningTypeView}>
-                                            <Icon name='ios-woman' size={40}  />
+                                        <View style={styles.cleaningTypeView}>
+                                            {
+                                               this.state.extra.indexOf(d.type)>-1?
+                                               <Icon name='ios-checkbox-outline' size={20} color='#212123'/>
+                                               :<Icon name='ios-square-outline' size={20} color='#212123'/>
+                                            }
                                             <Text style={styles.typeText}>{d.title}</Text>
                                         </View>
                                     </TouchableOpacity>   
                                 )
                             })
                         }
-                    </View>
-                    <Button text={'CONTINUE'} style={{marginVertical:15}} onPress={()=>this.Next()}/>
-                </ScrollView>
+                    </View> 
+                    <View style={styles.BarView}></View>
+                    <Text style={styles.helpText}>Check what applies to you below:</Text> 
+                    <TouchableOpacity onPress={()=>this.selectExtra(5)}>
+                        <View style={styles.cleaningTypeView_active}>
+                            {
+                                this.state.extra.indexOf(5)>-1?
+                                <Icon name='ios-checkbox-outline' size={25} color='#212123'/>
+                                :<Icon name='ios-square-outline' size={25} color='#212123'/>
+                            }
+                            <Text style={styles.typeText}>Do you have pets</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.selectExtra(6)}>
+                        <View style={styles.cleaningTypeView_active}>
+                            {
+                                this.state.extra.indexOf(6)>-1?
+                                <Icon name='ios-checkbox-outline' size={25} color='#212123'/>
+                                :<Icon name='ios-square-outline' size={25} color='#212123'/>
+                            }
+                            <Text style={styles.typeText}>Does your appartment have carpet?</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.selectExtra(7)}>
+                        <View style={styles.cleaningTypeView_active}>
+                            {
+                                this.state.extra.indexOf(7)>-1?
+                                <Icon name='ios-checkbox-outline' size={25} color='#212123'/>
+                                :<Icon name='ios-square-outline' size={25} color='#212123'/>
+                            }
+                            <Text style={styles.typeText}>Do you need your guest room sheets changed?</Text>
+                        </View>
+                    </TouchableOpacity>  
+
+
+                <View style={styles.BtnView}>
+                    <Button text={'Next'} onPress={()=>this.Next()}/>
+                </View>
                 
             </View>
         )
     }
     Next(){
-        
-        const {ServiceData} = this.props.navigation.state.params;        
-        ServiceData.extra = this.state.extra;
-        if(ServiceData.loggedin) this.props.navigation.navigate('Schedule',{ServiceData: ServiceData})
-        else this.props.navigation.navigate('Signup',{ServiceData: ServiceData})
+        if( this.state.extra.length===0){
+            alert("please select options")
+            return
+        }
+         let data = this.state.bookingdata
+         data.Extra = this.state.extra
+         this.props.BookingDataStore(data)
+         this.props.navigation.navigate('DateSet')
     }
 
 }
+
+
+const mapStateToProps = (state) => {
+    return {
+        userinfo: state.userinfo
+    }
+}
+const mapDispatchToProps = (dispatch) => {
+    return {
+        formDataStor: (data) => {
+            dispatch({
+                type: 'info_store',
+                value: data
+            })
+        },
+        BookingDataStore: (data) => {
+            dispatch({
+                type: 'BookingData_store',
+                value: data
+            })
+        }
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Extras) 

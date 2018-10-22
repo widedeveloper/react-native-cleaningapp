@@ -5,52 +5,61 @@ export default StyleSheet.create({
     container:{
         flex:1,
         backgroundColor:'#ffffff',
-        paddingTop: 30
+        
     },
     header: {
-        height: 60,
+        paddingTop: 30,
+        height: 90,
         width: width,
-        backgroundColor:'#fff',
+        backgroundColor:'#000',
         flexDirection: 'row',
         justifyContent:  'center',
         alignItems: 'center',
         borderBottomColor: 'rgba(33,33,33,0.4)',
         borderBottomWidth:0.5
     },
-    servicetitle: {
-        height: 60,
-        width: width,
-        backgroundColor:'#f7f7f7',
-        flexDirection: 'row',
-        justifyContent:  'center',
-        alignItems: 'center',
-        marginBottom: 10,     
-    },
-    helpText:{
-        fontSize: 14,
+    HelpText:{
+        fontSize: 20,
         fontWeight: '500',
         color: '#686868',
         width: width,
-        paddingLeft:20,
-        paddingRight:20,
-        marginVertical:5
+        marginVertical:25,
+        textAlign:'center'
+    },
+    BarView:{
+        paddingBottom:15,
+        borderBottomColor: '#000',
+        borderBottomWidth:1.5  
+    },
+    servicetitle: {
+        height: 80,
+        width: width,
+        flexDirection: 'row',
+        justifyContent:  'center',
+        alignItems: 'center',
+        marginBottom: 10, 
     },
     serviceText:{        
         fontSize: 20,
         fontWeight: '500',
-        color: '#686868',
-        width: width-50,
-        textAlign: 'center'
-
+        color: '#000',
+        textAlign: 'center',
+       
     },
     backIcon: {
         position: 'absolute',
+        top:40,
         left: 16
+    },
+    CloseIcon: {
+        position: 'absolute',
+        top:43,
+        right: 16
     },
     headerTitle: {
         fontSize: 24,
         fontWeight: '500',
-        color: '#212123'
+        color: '#FFF'
     },
     title: {
         fontSize: 16,
@@ -96,48 +105,38 @@ export default StyleSheet.create({
         color:'#212123'
     },
     cleaningTypeView: {
-        width: width-60,
-        height: 60,
-        borderBottomColor: '#212123',
-        borderBottomWidth: 1,
+        width: width,
+        height:50,
         flexDirection: 'row',
         justifyContent: 'space-around',
-        alignItems: 'center',        
-        borderRadius: 20,     
-        marginBottom: 7,
+        alignItems: 'center',
+        marginVertical: 10,
         opacity: 0.8
     },
     cleaningTypeView_active: {
-        width: width-60,
-        height: 60,
-        borderBottomColor: '#e3fff9',
-        borderBottomWidth: 1,
+        width: width,
+        height:60,
         flexDirection: 'row',
-        borderRadius: 20,        
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        marginBottom: 7,        
+        justifyContent: 'space-between',
+        alignItems: 'center', 
         backgroundColor: '#e3fff9',  
-        shadowColor: '#e3fff9',      
-        shadowOffset:{
-            width:0,
-            height:5
-        },        
-        shadowRadius: 5,
-        shadowOpacity:1,
-        elevation:2       
+        paddingLeft:26,
+        paddingRight:26,
+        borderColor: 'rgba(0,0,0,0.3)',
+        borderWidth: 0.5,
     },
     typeText: {
         fontSize: 20,
         fontWeight:'400',
         color: '#212123',
-        width:width-160,
     },
     typeContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-around',
-        paddingVertical: 10
+        paddingVertical: 10,
+        position:'absolute',
+        bottom:30
     },
     typeDescription: {
         color: '#212123',
@@ -222,16 +221,8 @@ export default StyleSheet.create({
         shadowRadius: 5,
         shadowOpacity:1,
         elevation:3 
-    },
-    cleanerView: {
-        flexDirection:'row',
-        alignItems:'center',
-        marginVertical: 10,
-        paddingVertical:7,
-        paddingHorizontal:10
-        // justifyContent: 'space-around'
-    },
-    loadinView: {
+    }
+    ,loadinView: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
@@ -240,15 +231,36 @@ export default StyleSheet.create({
         height: height,
         backgroundColor: 'rgba(0,0,0,0.1)'
     },
-    selectedCleanerView: {
+    serviceImage:{
+        width:60,
+        height:60,
+    },
+    extraImage:{
+        width:40,
+        height:40,
+    },
+    extraView: {
+        width: 60,
+        height: 60,
         flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',        
+        borderRadius: 30,     
+        marginBottom: 7,
+        opacity: 0.8
+    },
+    extraView_active: {
+        width: 60,
+        height: 60,
+        borderBottomColor: '#e3fff9',
+        borderBottomWidth: 1,
+        flexDirection: 'row',
+        borderRadius: 30,        
+        justifyContent: 'space-around',
         alignItems: 'center',
-        backgroundColor: '#5ea2e8',
-        paddingVertical:7,
-        borderRadius: 20,
-        marginVertical:10,
-        paddingHorizontal:10
-    }
-    
+        marginBottom: 7,        
+        backgroundColor: '#e3fff9',  
+        elevation:2       
+    },
     
 })
